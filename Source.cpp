@@ -54,13 +54,10 @@ public:
 				break;
 			}
 			lock.unlock();
-			auto t0 = Clock::now();
-			auto t1 = t0 + std::chrono::seconds(3);
-			//lock.lock();
 			std::unique_lock<std::mutex> lk(lock);
-			while (tail >= head + size&&Clock::now() < t1) {
+			while (tail >= head + size) {
 				Cfull++;
-				full.wait(lk);
+				full.wait_for(lk,std::chrono::seconds(3));
 			}
 			req--;
 			add_item(val);
@@ -78,13 +75,10 @@ public:
 				break;
 			}
 			lock.unlock();
-			auto t0 = Clock::now();
-			auto t1 = t0 + std::chrono::seconds(3);
-			//lock.lock();
 			std::unique_lock<std::mutex> lk(lock);
-			while (tail - head <= 0 && Clock::now() < t1) {
+			while (tail - head <= 0 ) {
 				Cempty++;
-				empty.wait(lk);
+				empty.wait_for(lk,std::chrono::seconds(3));
 			}
 			/*int x = NULL;
 			x = remove_item();*/
